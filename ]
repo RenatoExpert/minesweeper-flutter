@@ -1,0 +1,143 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+int matriz = 10;
+int nbombas = 5;
+int matrizElements() => matriz*matriz;
+List bombas = <int> [];
+List bombCart = []; 
+List detecsCar = [];
+List detecsInt = [];
+
+void main () {
+  minando();
+  runApp(Arthur());
+}
+
+void minando () {
+  sorteando();
+  listingBombs();
+  distribute();
+}
+
+class Calcs {
+
+  static List convToCart (int numero) {
+    int Valuex = numero%matriz;
+    int Valuey = numero~/matriz;
+    return [Valuex,Valuey];
+  }
+
+  static int convToId (List<int> ll)
+    => (ll[1]*matriz) +  ll[0];
+  
+  static int count (cTest, cList) {
+    int i = 0;
+    for (var cItem in cList) {
+      if (cTest == cItem) {
+        i++;
+      }
+    }
+    return i;
+  }
+}
+
+
+void sorteando(){
+  for (int i = 0; i < nbombas;) {
+    int bomba = new Random().nextInt((matrizElements()-1));
+    if (bombas.contains(bomba)==false) {
+      bombas.add(bomba);
+      i++;
+    }
+  }
+}
+
+void listingBombs () {
+  for (var i in bombas){
+    bombCart.add(Calcs.convToCart(i));
+  }
+}
+
+void distribute () {
+  for (List bmb in bombCart) {
+    for (var x = -1; x <= 1; x++) {
+      for (var y = -1 ; y <= 1; y++) {
+        int xax = bmb[0] + x;
+        int yax = bmb[1] + y;
+        List res = <int> [xax , yax];
+        detecsCar.add(res);
+      }
+    }
+  }
+  for (List<int> dc in detecsCar) {
+    if (dc[0]<matriz && dc[1]<matriz){
+      int intver = Calcs.convToId(dc);
+      detecsInt.add(intver);
+    }
+  }
+}
+
+void reacao(index) {
+  print('escreveste $index');
+  if (bombas.contains(index)==true) {
+    print('perdeste');
+  }
+}
+
+Widget casa (index){
+  if (bombas.contains(index)==true) {
+    return Icon(Icons.dangerous);
+  }
+  else {
+    return Text('${Calcs.count(index, detecsInt)}');
+  }
+}
+
+Widget Casinha extends ButtonTheme () =>
+  @override
+  var? Teste;
+  minWidth = 200.0;
+  height = 100.0;
+  Casinha () {
+    var this.Teste = 'a';
+  }
+}
+
+dynamic albert =
+  List.generate(matrizElements(), (index) {
+    return Casinha(     
+      child: RaisedButton(
+        onPressed: ()=>reacao(index),
+        padding: EdgeInsets.all(0),
+        child: SizedBox(
+          width:30.0,
+          height:30.0,
+          child: casa(index),
+        ),
+      ),		    
+    );
+  });
+
+class Arthur extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title:'Campo Minado',
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Campo Minado'),
+        ),
+        body: Center(
+          child:GridView.count(
+            crossAxisSpacing: 0,
+            mainAxisSpacing: 0,
+            crossAxisCount: 10,
+            children: albert,
+          )            
+        )
+     ),
+    );
+  }
+}
+       
