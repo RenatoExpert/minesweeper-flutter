@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'dart:async';
+import 'calc.dart';
 
 void main () {
   SettingUp.prepare();
   runApp(MyApp());
 }
 
+Clock GameClock = Clock();
 int matriz = 10; // square side size (x or y)
 int matrizElements () => matriz*matriz;
-int nbombas = 5;
+int nbombas = 15;
 List bombas = <int> [];
 List bombCart = []; 
 List detecsCar = [];
 List detecsInt = [];
 Map revealed = <int,int>{};
 int isReveal (index) => revealed[index];
+
+Staff SettingUp = Staff();
 
 class Staff {
   void prepare () { // setting up the game
@@ -63,30 +68,7 @@ class Staff {
   }
 }
 
-Staff SettingUp = Staff();
 
-class Calcs { // Math Stuff
-
-  static List convToCart (int numero) { // Convert from Index to Cartisian
-    int Valuex = numero%matriz;
-    int Valuey = numero~/matriz;
-    return [Valuex,Valuey];
-  }
-
-  static int convToId (List<int> ll) // Convert from Cartesian to Index
-    => (ll[1]*matriz) +  ll[0];
-  
-  static int count (cTest, cList) { // Count number of occurrences in a list
-    int i = 0;
-    for (var cItem in cList) {
-      if (cTest == cItem) {
-        i++;
-      }
-    }
-    return i;
-  }
-
-}
 
 // About Tile Label, changes, explosion and so on
 class TileController {
@@ -157,6 +139,35 @@ class TileController {
 }
 
 
+class Clock {
+
+  int timevar = 0;
+  int active = 0;
+  int get time {
+    return timevar;
+  }
+  void runn () async {
+//    while (this.active==1) {
+//      await Future.delayed(const Duration(seconds: 1),
+//        () { return ++timevar; },
+//      ).then((value) { print(value);
+//      });
+//    }
+  }
+  void stop () {
+    this.active = 0;
+  }
+  void reset() {
+    this.timevar = 0;
+  }
+  void startTimer (){
+    this.active = 1;
+    this.runn();
+  }
+
+}
+
+
 // Above is only design stuff
 class MyApp extends StatelessWidget {
   @override
@@ -176,11 +187,31 @@ class homepage extends StatefulWidget {
 }
 
 class _homepageState extends State<homepage> {
+  int _counter = 10;
+  Timer? _timer;
+  void _startTimer() {
+    _counter = 10;
+    if (_timer != null) {
+      _timer?.cancel();
+    }
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_counter > 0) {
+	  _counter--;
+	} else {
+	  _timer?.cancel();
+	}
+      });
+    });
+    }
+  void isRunning () {
+    _timer == null ? false : _timer!.isActive;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Campo Minado'),
+          title: Text('Campo Minado, time:${_counter}'),
         ),
         body: Center(
 	  child:Container(
@@ -199,6 +230,7 @@ class _homepageState extends State<homepage> {
                       height: 1.0,
                       child: RaisedButton(
                         onPressed:() {	
+                          _startTimer();
 			  if (isReveal(index)==0){
                             setState (() {
 		              TileController.showup(index);
