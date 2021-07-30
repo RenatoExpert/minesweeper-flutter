@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'dart:async';
 import 'calc.dart';
+import 'staff.dart';
 
 void main () {
   SettingUp.prepare();
   runApp(MyApp());
 }
 
-Clock GameClock = Clock();
 int matriz = 10; // square side size (x or y)
 int matrizElements () => matriz*matriz;
 int nbombas = 15;
@@ -20,53 +20,6 @@ Map revealed = <int,int>{};
 int isReveal (index) => revealed[index];
 
 Staff SettingUp = Staff();
-
-class Staff {
-  void prepare () { // setting up the game
-    this.sorteando(); // choosing random different numbers
-    this.listingBombs(); // convert bombs index to cartesian 
-    this.mapeando(); // giving revealed false values to all IDs
-    this.distribute(); // making detecsCar and Int for tile detections
-  }
-  void sorteando(){
-    for (int i = 0; i < nbombas;) {
-      int bomba = new Random().nextInt((matrizElements()-1));
-      if (bombas.contains(bomba)==false) {
-        bombas.add(bomba);
-        i++;
-      }
-    }
-  }
-  void listingBombs () {
-    for (var i in bombas){
-      bombCart.add(Calcs.convToCart(i));
-    }
-  }
-  void mapeando(){
-    for (int i = 0; i < matrizElements(); i++) {
-      revealed[i]=0;
-    }
-  }
-  void distribute () {
-    for (List bmb in bombCart) {
-      for (var x = -1; x <= 1; x++) {
-        for (var y = -1 ; y <= 1; y++) {
-          int xax = bmb[0] + x;
-          int yax = bmb[1] + y;
-          List res = <int> [xax , yax];
-          detecsCar.add(res);
-        }
-      }
-    }
-    for (List<int> dc in detecsCar) {
-      if (dc[0]<matriz && dc[1]<matriz){
-        int intver = Calcs.convToId(dc);
-        detecsInt.add(intver);
-      }
-    }
-    print('Ready to play!');
-  }
-}
 
 
 
@@ -139,35 +92,6 @@ class TileController {
 }
 
 
-class Clock {
-
-  int timevar = 0;
-  int active = 0;
-  int get time {
-    return timevar;
-  }
-  void runn () async {
-//    while (this.active==1) {
-//      await Future.delayed(const Duration(seconds: 1),
-//        () { return ++timevar; },
-//      ).then((value) { print(value);
-//      });
-//    }
-  }
-  void stop () {
-    this.active = 0;
-  }
-  void reset() {
-    this.timevar = 0;
-  }
-  void startTimer (){
-    this.active = 1;
-    this.runn();
-  }
-
-}
-
-
 // Above is only design stuff
 class MyApp extends StatelessWidget {
   @override
@@ -189,24 +113,27 @@ class homepage extends StatefulWidget {
 class _homepageState extends State<homepage> {
   int _counter = 10;
   Timer? _timer;
+  bool _isGoing = false;
+
   void _startTimer() {
-    _counter = 10;
+    if (_isGoing == false){
+      _counter = 10;
+      _isGoing = true;
+    }
     if (_timer != null) {
       _timer?.cancel();
     }
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
         if (_counter > 0) {
-	  _counter--;
+	  --_counter;
 	} else {
 	  _timer?.cancel();
 	}
       });
     });
-    }
-  void isRunning () {
-    _timer == null ? false : _timer!.isActive;
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
