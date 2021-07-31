@@ -5,10 +5,19 @@ import 'dart:math';
 
 class Staff {
   void prepare () { // setting up the game
+    this.allZero(); // turn everything to zero, great to when the game is reseted
     this.sorteando(); // choosing random different numbers
     this.listingBombs(); // convert bombs index to cartesian 
     this.mapeando(); // giving revealed false values to all IDs
     this.distribute(); // making detecsCar and Int for tile detections
+  }
+  void allZero() {
+    bombas = [];
+    bombCart = [];
+    detecsCar = [];
+    detecsInt = [];
+    revealed = <int, int>{};
+    gameOverBool = false;
   }
   void sorteando(){
     for (int i = 0; i < nbombas;) {
@@ -36,7 +45,11 @@ class Staff {
           int xax = bmb[0] + x;
           int yax = bmb[1] + y;
           List res = <int> [xax , yax];
-          detecsCar.add(res);
+          if ( xax < matriz && yax < matriz ) {
+            if ( xax >= 0 && yax >= 0 ) {
+	      detecsCar.add(res);
+	    }
+	  }
         }
       }
     }
