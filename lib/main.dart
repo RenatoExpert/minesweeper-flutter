@@ -19,10 +19,23 @@ List detecsInt = [];
 List markedFlag = [];
 Map revealed = <int,int>{};
 bool gameOverBool = false;
+bool victoryBool = false; // maybe dispensable
 
 int matrizElements () => matriz*matriz;
 int isReveal (index) => revealed[index];
 
+void victoryCheck () {
+  if (remaingBombs() == 0 ) {
+    victoryBool = true;
+    gameOverBool = true;
+    print('You won');
+  }
+}
+
+void gameOver () {
+  gameOverBool = true;
+  TileController.revealAllBombs();
+}
 // working fine
 int remaingBombs () {
   return nbombas - Calcs.count(1,revealed.values);
@@ -34,10 +47,6 @@ int remaingTiles () {
 
 Staff SettingUp = Staff();
 
-void gameOver () {
-  gameOverBool = true;
-  TileController.revealAllBombs();
-}
 
 // About Tile Label, changes, explosion and so on
 class TileController {
@@ -124,13 +133,13 @@ class TileController {
     }
     else {
       value = Text('${Calcs.count(index,detecsInt)}');
-    } //Icons.map notifications online_prediction
+    }
     // Hidden or not
     if (isReveal(index)==2){
       return value;
     }
     else if (isReveal(index)==1) {
-      return Icon(Icons.online_prediction);
+      return Icon(Icons.flag);
       print('isrev');
     }
     else {
@@ -182,7 +191,7 @@ class _homepageState extends State<homepage> {
       });
     });
   }
-
+// Icons.assistant_photo gesture gavel hardware landscape map parkreplay restart_alt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -190,22 +199,38 @@ class _homepageState extends State<homepage> {
 	  leading: Icon(Icons.hiking),
           title: Text('Campo Minado'),
 	  actions: [
-	    Text ('remaing bombs:${remaingBombs()}' 
-	          ' remaning tiles:${remaingTiles()}'),
-	    Icon (Icons.access_time,),
+	    Padding(
+	      padding: EdgeInsets.all(10.0),
+	      child: Row (
+	        children: [
+		  Icon(Icons.warning),
+	          Center (child:Text ('${remaingBombs()}'),),
+		],),
+	    ),
+	    Padding(
+	      padding: EdgeInsets.all(10.0),
+	      child: Row (
+	        children: [
+		  Icon(Icons.map),
+	          Center (child: Text ('${remaingTiles()}'),),
+		],),
+	    ),
             Padding(
 	      padding: EdgeInsets.all(10.0),
-	      child: Center(
-	        child:Text(
-	          '${_counter}',
-	  	  //style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.0),		    
-	        ),
-	      ),
+	      child: Row (
+	        children: [
+	          Icon (Icons.access_time,),
+	          Center(
+	            child:Text(
+	              '${_counter}',
+	            ),
+	          ),
+		],),
 	    ),
 	    Padding(
 	      padding: EdgeInsets.all(10.0),		    
 	      child: IconButton(
-	        icon:Icon(Icons.refresh), // or Icons.loop
+	        icon:Icon(Icons.restart_alt),
 		onPressed: () {
 		  _counter = 0;
 		  _isGoing = false;
@@ -230,9 +255,10 @@ class _homepageState extends State<homepage> {
                 crossAxisCount: matriz,
                 children:
                   List.generate(matrizElements(), (index) {
-                    return ButtonTheme(	
+                    return ButtonTheme(	// buttonTheme is deprecated, change it as fast as possible
+		      //color: Color.fromRGBO(255,255,255,0),
                       height: 1.0,
-                      child: RaisedButton(
+                      child: ElevatedButton(
                         onPressed:() {
 			  if (gameOverBool == false) {	
                             _startTimer();
@@ -241,6 +267,7 @@ class _homepageState extends State<homepage> {
 		                TileController.showup(index, false);
                               });
 			    }
+			    victoryCheck();
 			  }
 			  else {
 			    print('locked');
@@ -251,7 +278,6 @@ class _homepageState extends State<homepage> {
 			    TileController.showup(index,true);
 			  });
 	                },
-                      padding: EdgeInsets.all(0),
                       child: TileController.label(index),
                     ),
                   );     
