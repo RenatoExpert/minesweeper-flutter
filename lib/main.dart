@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'dart:math';
 import 'dart:async';
-import 'dart:core';
 import 'calc.dart';
 import 'staff.dart';
+import 'ad_state.dart';
 
 void main () {
+  WidgetsFlutterBinding.ensureInitialized();
+  final initFuture = MobileAds.instance.initialize();
+  final adState = AdState(initFuture);
   SettingUp.prepare();
-  runApp(MyApp());
+  runApp( MyApp() );
 }
 
 int matriz = 10; // square side size (x or y)
