@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.campominado">
+    package="com.example.minesweeperflutter">
    <application
-        android:label="campominado"
+        android:label="Minesweeper Flutter"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
