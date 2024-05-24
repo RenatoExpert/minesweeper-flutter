@@ -1,0 +1,10 @@
+services:
+  webserver:
+    container_name: minesweeper_web
+    image: minesweeper_web
+    build:
+      context: .
+      target: web_deploy
+    ports:
+      - "8080:8080"
+
