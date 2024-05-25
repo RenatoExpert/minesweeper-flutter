@@ -1,4 +1,4 @@
-FROM instrumentisto/flutter:2.10 as load
+FROM renatoexpert/flutter:2.0.6 as load
 WORKDIR /app
 COPY . .
 RUN flutter pub get
